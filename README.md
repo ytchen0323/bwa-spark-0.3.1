@@ -1,4 +1,4 @@
-bwa-spark-0.3.0
+bwa-spark-0.3.1
 ===============
 Achieved in bwa-spark-0.2.0:
 (1) Worker1 is verified
