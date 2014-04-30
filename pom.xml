@@ -2,7 +2,7 @@
     <groupId>cs.ucla.edu</groupId>
     <artifactId>bwa-spark</artifactId>
     <modelVersion>4.0.0</modelVersion>
-    <version>0.2.0</version>
+    <version>0.3.1</version>
     <packaging>jar</packaging>
     <name>BWA-Spark</name>
 
