@@ -2,12 +2,13 @@ package cs.ucla.edu.bwaspark.datatype
 
 import java.io.FileInputStream
 import java.nio.channels.FileChannel
-
-import scala.List
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import scala.Serializable
 
 import cs.ucla.edu.bwaspark.datatype.BinaryFileReadUtil._
 
-class BWTType {
+class BWTType extends Serializable {
   // Data Structure
   var primary: Long = _
   var L2: Array[Long] = new Array[Long](5)
@@ -18,8 +19,6 @@ class BWTType {
   var saIntv: Int = _
   var numSa: Long = _
   var sa: Array[Long] = _
-
-  val readBufSize = 0x80000
 
   /**
     *  Load the values of a BWTType object
@@ -133,6 +132,34 @@ class BWTType {
     // Debugging messages
     //for(i <- 0 to 255) 
       //println("cntTable(" + i + "): " + cntTable(i))
+  }
+
+  private def writeObject(out: ObjectOutputStream) {
+    out.writeLong(primary)
+    out.writeObject(L2)
+    out.writeLong(seqLen)
+    out.writeLong(bwtSize)
+    out.writeObject(bwt)
+    out.writeObject(cntTable)
+    out.writeInt(saIntv)
+    out.writeLong(numSa)
+    out.writeObject(sa)
+  }
+  
+  private def readObject(in: ObjectInputStream) {
+    primary = in.readLong
+    L2 = in.readObject.asInstanceOf[Array[Long]]
+    seqLen = in.readLong
+    bwtSize = in.readLong
+    bwt = in.readObject.asInstanceOf[Array[Int]]
+    cntTable = in.readObject.asInstanceOf[Array[Int]]
+    saIntv = in.readInt
+    numSa = in.readLong
+    sa = in.readObject.asInstanceOf[Array[Long]]
+  }
+
+  private def readObjectNoData() {
+
   }
 }
 

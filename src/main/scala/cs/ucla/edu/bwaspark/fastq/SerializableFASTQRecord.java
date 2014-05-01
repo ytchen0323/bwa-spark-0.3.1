@@ -11,7 +11,7 @@ import java.io.Serializable;
 
 /**
  *   For now, Spark does not support Avro. This class is just a quick
- *   workaround that (de)serializes AminoAcid objects using Avro.
+ *   workaround that (de)serializes FASTQRecord objects using Avro.
  */
 public class SerializableFASTQRecord extends FASTQRecord implements Serializable {
 

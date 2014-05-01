@@ -1,8 +1,9 @@
 package cs.ucla.edu.bwaspark.datatype
 
 import java.io._
+import scala.Serializable
 
-class BNTSeqType() {
+class BNTSeqType extends Serializable {
   //length of contents in .pac file
   var l_pac: Long = _
 
@@ -81,4 +82,27 @@ class BNTSeqType() {
     ambs = ambResult._1
     n_holes = ambResult._2
   }
+
+  private def writeObject(out: ObjectOutputStream) {
+    out.writeLong(l_pac)
+    out.writeInt(n_seqs)
+    out.writeInt(seed)
+    out.writeObject(anns)
+    out.writeInt(n_holes)
+    out.writeObject(ambs)
+  }
+
+  private def readObject(in: ObjectInputStream) {
+    l_pac = in.readLong
+    n_seqs = in.readInt
+    seed = in.readInt
+    anns = in.readObject.asInstanceOf[Array[BNTAnnType]]
+    n_holes = in.readInt
+    ambs = in.readObject.asInstanceOf[Array[BNTAmbType]]
+  }
+
+  private def readObjectNoData() {
+
+  }
+
 }             

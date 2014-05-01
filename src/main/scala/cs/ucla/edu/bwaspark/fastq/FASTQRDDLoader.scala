@@ -27,12 +27,19 @@ class FASTQRDDLoader(sc: SparkContext, rootFilePath: String, numDir: Int) {
       println(rec.getSeqLength())
    }
 
+   // Not used at the current stage
+   // Cannot find a way to access HDFS directly from Spark...
    def findFiles(fs: FileSystem, path: Path): Seq[Path] = {
       val statuses = fs.listStatus(path)
       val dirs = statuses.filter(s => s.isDirectory).map(s => s.getPath)
       dirs.toSeq ++ dirs.flatMap(p => findFiles(fs, p))
    }
 
+   /**
+     *  Load the FASTQ from HDFS into RDD
+     *
+     *  @param path the input HDFS path
+     */
    def RDDLoad(path: String): RDD[FASTQRecord] = {
       val job = new Job(sc.hadoopConfiguration)
       ParquetInputFormat.setReadSupportClass(job, classOf[AvroReadSupport[FASTQRecord]])
@@ -40,6 +47,12 @@ class FASTQRDDLoader(sc: SparkContext, rootFilePath: String, numDir: Int) {
       records
    }
 
+   /**
+     *  Load all directories from HDFS of the given FASTQ file
+     *  NOTE: Currently we cannot access the HDFS directory tree structure
+     *  We ask users to input the number of subdirectories manually...
+     *  This should be changed later.  
+     */
    def RDDLoadAll(): RDD[FASTQRecord] = {
       //val fs = FileSystem.get(sc.hadoopConfiguration)
       //val paths = findFiles(fs, new Path(rootFilePath))

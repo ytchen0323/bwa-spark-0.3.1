@@ -1,11 +1,14 @@
 package cs.ucla.edu.bwaspark.datatype
 
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.io.{FileInputStream, IOException}
 import java.nio.channels.FileChannel
 import cs.ucla.edu.bwaspark.datatype.BinaryFileReadUtil._
+import scala.Serializable
 
 //BWAIdxType: maintaining all the information of BWA Index generated from FastA Reference
-class BWAIdxType {  
+class BWAIdxType extends Serializable {  
 
   //1st: BWTType(".bwt", ".sa" files)
   var bwt: BWTType = _
@@ -52,4 +55,21 @@ class BWAIdxType {
       }
     }
   }
+
+  private def writeObject(out: ObjectOutputStream) {
+    out.writeObject(bwt)
+    out.writeObject(bns)
+    out.writeObject(pac) 
+  }
+
+  private def readObject(in: ObjectInputStream) {
+    bwt = in.readObject.asInstanceOf[BWTType]
+    bns = in.readObject.asInstanceOf[BNTSeqType]
+    pac = in.readObject.asInstanceOf[Array[Byte]]
+  }
+
+  private def readObjectNoData() {
+
+  }
+
 }
