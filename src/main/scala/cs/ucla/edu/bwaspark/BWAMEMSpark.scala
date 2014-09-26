@@ -57,44 +57,45 @@ object BWAMEMSpark {
     //val fastqLoader = new FASTQLocalFileLoader(200000000)
     //fastqLoader.storeFASTQInHDFS(sc, "/home/ytchen/genomics/data/HCC1954_1_10Mreads.fq", "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_10Mreads")
     //fastqLoader.storeFASTQInHDFS(sc, "/home/ytchen/genomics/data/HCC1954_1_20reads.fq", "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_20reads")
-    fastqLoader.storeFASTQInHDFS(sc, "/mnt/pd1/genomics/data/HCC1954_1_100reads.fq", "hdfs://hadoop-m:8020/user/pengwei/data/HCC1954_1_100reads")
+    //fastqLoader.storeFASTQInHDFS(sc, "/mnt/pd1/genomics/data/HCC1954_1_100reads.fq", "hdfs://hadoop-m:8020/user/pengwei/data/HCC1954_1_100reads")
+    fastqLoader.storeFASTQInHDFS(sc, "/mnt/pd1/genomics/data/ManmadeFASTQ_1.fq", "hdfs://hadoop-m:8020/user/pengwei/data/ManmadeFASTQ_1")
     //fastqLoader.storeFASTQInHDFS(sc, "/home/ytchen/genomics/data/ERR013140_1.filt.fastq", "hdfs://Jc11:9000/user/ytchen/data/ERR013140_1.filt.fastq_96")
     //fastqLoader.storeFASTQInHDFS(sc, "/home/pengwei/genomics/InputFiles/HCC1954_1.fq", "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1.fq")
 
-    //loading index files
-    println("Load Index Files")
-    val bwaIdx = new BWAIdxType
-    val prefix = "/mnt/pd1/genomics/ReferenceMetadata/human_g1k_v37.fasta"
-    bwaIdx.load(prefix, 0)
+    //////loading index files
+    ////println("Load Index Files")
+    ////val bwaIdx = new BWAIdxType
+    ////val prefix = "/mnt/pd1/genomics/ReferenceMetadata/human_g1k_v37.fasta"
+    ////bwaIdx.load(prefix, 0)
 
-    //loading BWA MEM options
-    println("Load BWA-MEM options")
-    val bwaMemOpt = new MemOptType
-    bwaMemOpt.load
+    //////loading BWA MEM options
+    ////println("Load BWA-MEM options")
+    ////val bwaMemOpt = new MemOptType
+    ////bwaMemOpt.load
 
-    //val bwaIdxBWTGlobal = sc.broadcast(bwaIdx.bwt)
-    //val bwaIdxBNSGlobal = sc.broadcast(bwaIdx.bns)
-    //val bwaIdxPACGlobal = sc.broadcast(bwaIdx.pac)
-    val bwaIdxGlobal = sc.broadcast(bwaIdx)
-    //val bwaIdxGlobal = sc.broadcast(bwaIdx, prefix)
-    val bwaMemOptGlobal = sc.broadcast(bwaMemOpt)
+    //////val bwaIdxBWTGlobal = sc.broadcast(bwaIdx.bwt)
+    //////val bwaIdxBNSGlobal = sc.broadcast(bwaIdx.bns)
+    //////val bwaIdxPACGlobal = sc.broadcast(bwaIdx.pac)
+    ////val bwaIdxGlobal = sc.broadcast(bwaIdx)
+    //////val bwaIdxGlobal = sc.broadcast(bwaIdx, prefix)
+    ////val bwaMemOptGlobal = sc.broadcast(bwaMemOpt)
 
-    //debugLevel = 1
+    //////debugLevel = 1
 
-    //val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_20reads", 1)
-    //val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_100reads", 1)
-    //val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_10Mreads", 2)
-    //val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://hadoop-m:8020/user/pengwei/data/HCC1954_1.fq", 201)
-    val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://hadoop-m:8020/user/pengwei/data/HCC1954_1_100reads.fq", 1)
-    //val fastqRDD = fastqRDDLoader.RDDLoad("hdfs://Jc11:9000/user/ytchen/data/ERR013140_1.filt.fastq_new/0")
-    val fastqRDD = fastqRDDLoader.RDDLoadAll
-    //fastqRDD.cache()
+    //////val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_20reads", 1)
+    //////val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_100reads", 1)
+    //////val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_10Mreads", 2)
+    //////val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://hadoop-m:8020/user/pengwei/data/HCC1954_1.fq", 201)
+    ////val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://hadoop-m:8020/user/pengwei/data/HCC1954_1_100reads.fq", 1)
+    //////val fastqRDD = fastqRDDLoader.RDDLoad("hdfs://Jc11:9000/user/ytchen/data/ERR013140_1.filt.fastq_new/0")
+    ////val fastqRDD = fastqRDDLoader.RDDLoadAll
+    //////fastqRDD.cache()
 
-    val reads = fastqRDD.map( seq => bwaMemWorker1(bwaMemOptGlobal.value, bwaIdxGlobal.value.bwt, bwaIdxGlobal.value.bns, bwaIdxGlobal.value.pac, null, seq) )
-    //val reads = fastqRDD.map( seq => bwaMemWorker1(bwaMemOptGlobal.value, bwaIdxBWTGlobal.value, bwaIdxBNSGlobal.value, bwaIdxPACGlobal.value, null, seq) )
-    val c = reads.count
-    println("Count: " + c)
-    //println("Count: " + reads.map( read => bwaMemWorker2(bwaMemOptGlobal.value, read.regs, bwaIdxGlobal.value.bns, bwaIdxGlobal.value.pac, read.seq, 0) ).reduce(_ + _))
+    ////val reads = fastqRDD.map( seq => bwaMemWorker1(bwaMemOptGlobal.value, bwaIdxGlobal.value.bwt, bwaIdxGlobal.value.bns, bwaIdxGlobal.value.pac, null, seq) )
+    //////val reads = fastqRDD.map( seq => bwaMemWorker1(bwaMemOptGlobal.value, bwaIdxBWTGlobal.value, bwaIdxBNSGlobal.value, bwaIdxPACGlobal.value, null, seq) )
+    ////val c = reads.count
+    ////println("Count: " + c)
+    //////println("Count: " + reads.map( read => bwaMemWorker2(bwaMemOptGlobal.value, read.regs, bwaIdxGlobal.value.bns, bwaIdxGlobal.value.pac, read.seq, 0) ).reduce(_ + _))
     
   } 
 }
