@@ -14,7 +14,7 @@ import scala.List
 import cs.ucla.edu.avro.fastq._
 
 import parquet.hadoop.ParquetOutputFormat
-import parquet.avro.{AvroParquetOutputFormat, AvroWriteSupport}
+import parquet.avro.AvroParquetOutputFormat
 import org.apache.hadoop.mapreduce.Job
 import parquet.hadoop.util.ContextUtil
 import parquet.hadoop.metadata.CompressionCodecName
@@ -109,7 +109,6 @@ class FASTQLocalFileLoader(batchedLineNum: Int) {
          val job = new Job(pairRDD.context.hadoopConfiguration)
 
          // Configure the ParquetOutputFormat to use Avro as the serialization format
-         ParquetOutputFormat.setWriteSupportClass(job, classOf[AvroWriteSupport])
          //ParquetOutputFormat.setCompression(job, CompressionCodecName.GZIP)
          ParquetOutputFormat.setCompression(job, CompressionCodecName.UNCOMPRESSED)
          ParquetOutputFormat.setEnableDictionary(job, true)
@@ -120,7 +119,7 @@ class FASTQLocalFileLoader(batchedLineNum: Int) {
          AvroParquetOutputFormat.setSchema(job, cs.ucla.edu.avro.fastq.FASTQRecord.SCHEMA$)
          // Save the RDD to a Parquet file in our temporary output directory
          val outputPath = outFileRootPath + "/"  + i.toString();
-         pairRDD.saveAsNewAPIHadoopFile(outputPath, classOf[Void], classOf[FASTQRecord], classOf[ParquetOutputFormat[FASTQRecord]], ContextUtil.getConfiguration(job))
+         pairRDD.saveAsNewAPIHadoopFile(outputPath, classOf[Void], classOf[FASTQRecord], classOf[AvroParquetOutputFormat], ContextUtil.getConfiguration(job))
          i += 1
       }
    }

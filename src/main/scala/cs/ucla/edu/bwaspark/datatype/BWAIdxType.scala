@@ -22,6 +22,7 @@ class BWAIdxType extends Serializable {
   //loading files into fields
   //prefix: prefix of filenames
   //which: !!!to add!!!
+  def load(prefix: String) { load(prefix, 0) }
   def load(prefix: String, which: Int) {
     //There is a function called "bwa_idx_infer_prefix" in original BWA,
     //but it seems to be useless

@@ -2,6 +2,7 @@ package cs.ucla.edu.bwaspark
 
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
+import org.apache.spark.SparkConf
 import org.apache.spark.rdd.RDD
 //import org.apache.spark.storage.StorageLevel
 
@@ -48,8 +49,8 @@ object BWAMEMSpark {
   def main(args: Array[String]) {
     //val sc = new SparkContext("local[96]", "BWA-mem Spark",
        //"/home/hadoopmaster/spark/spark-0.9.0-incubating-bin-hadoop2-prebuilt/", List("/home/ytchen/incubator/bwa-spark-0.3.1/target/bwa-spark-0.3.1.jar"))
-    val sc = new SparkContext("spark://Jc11:7077", "BWA-mem Spark",
-       "/home/hadoopmaster/spark/spark-0.9.0-incubating-bin-hadoop2-prebuilt/", List("/home/ytchen/incubator/bwa-spark-0.3.1/target/bwa-spark-0.3.1.jar"))
+    val conf = new SparkConf().setAppName("BWA-mem Spark").set("spark.executor.memory", "32g").set("spark.akka.frameSize", "128").set("spark.logConf", "true")
+    val sc = new SparkContext(conf)
 
     //val fastqLoader = new FASTQLocalFileLoader(10000000)
     //val fastqLoader = new FASTQLocalFileLoader(40000000)
@@ -63,7 +64,7 @@ object BWAMEMSpark {
     //loading index files
     println("Load Index Files")
     val bwaIdx = new BWAIdxType
-    val prefix = "/home/pengwei/genomics/ReferenceMetadata/human_g1k_v37.fasta"
+    val prefix = "/home/hadoopmaster/genomics/ReferenceMetadata/human_g1k_v37.fasta"
     bwaIdx.load(prefix, 0)
 
     //loading BWA MEM options
@@ -74,7 +75,8 @@ object BWAMEMSpark {
     //val bwaIdxBWTGlobal = sc.broadcast(bwaIdx.bwt)
     //val bwaIdxBNSGlobal = sc.broadcast(bwaIdx.bns)
     //val bwaIdxPACGlobal = sc.broadcast(bwaIdx.pac)
-    val bwaIdxGlobal = sc.broadcast(bwaIdx)
+    //val bwaIdxGlobal = sc.broadcast(bwaIdx)
+    val bwaIdxGlobal = sc.broadcast(bwaIdx, prefix)
     val bwaMemOptGlobal = sc.broadcast(bwaMemOpt)
 
     //debugLevel = 1
@@ -82,7 +84,7 @@ object BWAMEMSpark {
     //val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_20reads", 1)
     //val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_100reads", 1)
     //val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1_10Mreads", 2)
-    val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/ytchen/data/HCC1954_1.fq", 51)
+    val fastqRDDLoader = new FASTQRDDLoader(sc, "hdfs://Jc11:9000/user/pengwei/data/HCC1954_1.fq", 201)
     //val fastqRDD = fastqRDDLoader.RDDLoad("hdfs://Jc11:9000/user/ytchen/data/ERR013140_1.filt.fastq_new/0")
     val fastqRDD = fastqRDDLoader.RDDLoadAll
     //fastqRDD.cache()
