@@ -210,8 +210,6 @@
             <groupId>org.apache.spark</groupId>
             <artifactId>spark-core_${scala.artifact.suffix}</artifactId>
             <version>${spark.version}</version>
-	    <scope>system</scope>
-	    <systemPath>/home/pengwei/spark-1.0.1_modified/assembly/target/scala-2.10/spark-assembly-1.0.1-hadoop2.4.1.jar</systemPath>
             <exclusions>
               <exclusion>
                 <groupId>org.apache.hadoop</groupId>
